@@ -5,7 +5,7 @@
             {{'{{'}} html()->label(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))->class('col-md-2 form-control-label')->for('{{item['name']}}') }}
             <div class="col-md-10">
                 {% if "foreign" in item%}
-                    <select class="form-control m-bot15" name="{{item['name']}}" {%if item['frontendRules'][0]=="required" %} required  {%endif%}>
+                    <select class="form-control m-bot15" name="{{item['name']}}" {%if item['frontendRules']['required']=="required" %} required  {%endif%}>
                          <option value="">select...</option>
                         {{'@'}}{{'if'}}  (${{item['foreign']['table']}}->count())
                         {{'@'}}{{'foreach'}}(${{item['foreign']['table']}} as $temp)
@@ -32,13 +32,13 @@
 
 
                 {% elif item['front_type']=="Integer" %}
-                    <input name="{{item['name']}}" type="number" value="{{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})?${{data['modelDotNotation']}}->{{item['name']}}:  {%if 'default' in item%} {{item['default']}} {%else%}0{%endif%} }}" class="form-control" id="{{item['name']}}"  {%if "min" in item['frontendRules'] %}   min ="{{item['frontendRules']['min']}}"{%endif%} {%if "max" in item['frontendRules'] %} max ="{{item['frontendRules']['max']}}" {%endif%}{%if item['frontendRules'][0]=="required" %} required  {%endif%} >
+                    <input name="{{item['name']}}" type="number" value="{{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})?${{data['modelDotNotation']}}->{{item['name']}}:  {%if 'default' in item%} {{item['default']}} {%else%}0{%endif%} }}" class="form-control" id="{{item['name']}}"  {%if "min" in item['frontendRules'] %}   min ="{{item['frontendRules']['min']}}"{%endif%} {%if "max" in item['frontendRules'] %} max ="{{item['frontendRules']['max']}}" {%endif%}{%if item['frontendRules']['required']=="required" %} required  {%endif%} >
                 {% elif item['front_type']=="decimal" %}
-                    <input name="{{item['name']}}" type="number" value="{{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})?${{data['modelDotNotation']}}->{{item['name']}}: {%if 'default' in item%}{{item['default']}}{%else%}0{%endif%} }}" class="form-control" id="{{item['name']}}" {%if "min" in item['frontendRules'] %} min ="{{item['frontendRules']['min']}}"{%endif%}  {%if "max" in item['frontendRules'] %} max ="{{item['frontendRules']['max']}}" {%endif%}{%if item['frontendRules'][0]=="required"%} required  {%endif%} >
+                    <input name="{{item['name']}}" type="number" value="{{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})?${{data['modelDotNotation']}}->{{item['name']}}: {%if 'default' in item%}{{item['default']}}{%else%}0{%endif%} }}" class="form-control" id="{{item['name']}}" {%if "min" in item['frontendRules'] %} min ="{{item['frontendRules']['min']}}"{%endif%}  {%if "max" in item['frontendRules'] %} max ="{{item['frontendRules']['max']}}" {%endif%}{%if item['frontendRules']['required']=="required"%} required  {%endif%} >
                 {% elif item['front_type']=="select" or item['front_type']=='multiselect' %}
                     {{'{{'}} html()->{{item['front_type']}}('{{item['name']}}',[ {%for key,el in item['selected_data'].items()%}  '{{key}}'=>'{{el}}', {% endfor%}])
                     ->class('form-control')
-                    ->placeholder(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}')){%if "frontendRules"in item and item['frontendRules'][0]=='required'%}
+                    ->placeholder(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}')){%if "frontendRules"in item and item['frontendRules']['required']=='required'%}
                         ->required(){%endif%}
                     }}
 
@@ -50,7 +50,7 @@
                             ->attribute('minlength', {{item['frontendRules']['min']}}){%endif%}
                         {% if "max" in item['frontendRules']%}
                             ->attribute('maxlength', {{item['frontendRules']['max']}}){%endif%}
-                      {% if item['frontendRules'][0]=='required'%}
+                      {% if item['frontendRules']['required']=='required'%}
                             ->required() {%endif%}
                          }}
                 {%endif%}
