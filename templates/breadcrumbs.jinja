@@ -1,0 +1,31 @@
+
+//start_{{data['modelName']}}_start
+Breadcrumbs::register('admin.{{data['modelDotNotation']}}.index', function ($breadcrumbs) {
+$breadcrumbs->parent('admin.dashboard');
+$breadcrumbs->push(__('strings.backend.{{data['tableName']}}.title'), route('admin.{{data['modelDotNotation']}}.index'));
+});
+{%for item in data['relationTables'] %}
+ Breadcrumbs::register('admin.{{data['modelDotNotation']}}.{{item}}', function ($breadcrumbs) {
+    $breadcrumbs->parent('admin.dashboard');
+   $breadcrumbs->push(__('strings.backend.{{data['tableName']}}.title'), route('admin.{{data['modelDotNotation']}}.index'));
+   });
+{% endfor %}
+
+
+Breadcrumbs::register('admin.{{data['modelDotNotation']}}.create', function ($breadcrumbs) {
+$breadcrumbs->parent('admin.{{data['modelDotNotation']}}.index');
+$breadcrumbs->push(__('labels.backend.{{data['tableName']}}.create'), route('admin.{{data['modelDotNotation']}}.create'));
+});
+
+Breadcrumbs::register('admin.{{data['modelDotNotation']}}.show', function ($breadcrumbs, $id) {
+$breadcrumbs->parent('admin.{{data['modelDotNotation']}}.index');
+$breadcrumbs->push(__('menus.backend.{{data['tableName']}}.view'), route('admin.{{data['modelDotNotation']}}.show', $id));
+});
+
+Breadcrumbs::register('admin.{{data['modelDotNotation']}}.edit', function ($breadcrumbs, $id) {
+$breadcrumbs->parent('admin.{{data['modelDotNotation']}}.index');
+$breadcrumbs->push(__('menus.backend.{{data['tableName']}}.edit'), route('admin.{{data['modelDotNotation']}}.edit', $id));
+});
+//end_{{data['modelName']}}_end
+
+//*****Do Not Delete Me

@@ -1,0 +1,8 @@
+//start_{{data['modelName']}}_start {%if True%}
+Route::resource('{{data['modelDotNotation']}}', 'API\{{data['modelName']}}APIController');
+{%else%}
+Route::get('/{{data['modelDotNotation']}}', 'Backend\\{{data['modelName']}}Controller@index');
+Route::get('/{{data['modelDotNotation']}}/{id}','API\{{data['modelName']}}APIControlle@{{"show"}}')->name('api/{{data['modelDotNotation']}}/show');{%endif%}
+//end_{{data['modelName']}}_end
+
+//*****Do Not Delete Me

@@ -1,0 +1,50 @@
+<div class="row mt-4 mb-4">
+    <div class="col">
+
+       {%for item in data['columns'] %}{%if item['inView']==True%}
+            <div class="form-group row">
+            {{"{{"}} html()->label(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))->class('col-md-2 form-control-label')->for('{{item['name']}}') }}
+            <div class="col-md-10">
+       {%if item['front_type']=="img" or item['front_type']=="image"%}
+               @if (!empty(${{data['modelDotNotation']}}) && ${{data['modelDotNotation']}}->{{item['name']}})
+                    <div>{!! html()->img(${{data['modelDotNotation']}}->{{item['name']}}_url)->class('img-thumbnail')  !!}</div>
+                @else
+                    <div>{!! html()->i()->class('fa fa-image fa-9x')  !!}</div>
+               @endif
+
+       {%else%}
+
+                {{"{{"}} ${{data['modelDotNotation']}}->{{item['name']}} }}
+
+           {%endif%} </div><!--col-->
+         </div><!--form-group-->
+         {%endif%}{%endfor%}
+
+        <!--end-columns-->
+      {%for item in data['relations']['belongsToMany'] %}{%if item['inView']==True%}
+        <div class="form-group row">
+           {{"{{"}}html()->label(__('{{item['related_model_name_plural']}}'))->class('col-md-2 form-control-label')->for('{{item['related_table']}}') }}
+            <div class="col-md-10">
+                @if  ( isset(${{item['related_table']}})&&${{item['related_table']}}->count())
+                    @foreach(${{item['related_table']}} as $temp)
+                        {{"{{"}}$temp->{{item['field_view']}} }},
+                    @endforeach
+                @endif
+            </div><!--col-->
+        </div><!--form-group-->
+       {%endif%} {%endfor%}{%for item in data['relations']['hasMany'] %}{%if item['inView']==True%}
+        <div class="form-group row">
+           {{"{{"}}html()->label(__('{{item['related_model_name_plural']}}'))->class('col-md-2 form-control-label')->for('{{item['related_table']}}') }}
+            <div class="col-md-10">
+                @if  ( isset(${{item['related_table']}})&&${{item['related_table']}}->count())
+                    @foreach(${{item['related_table']}} as $temp)
+                       {{"{{"}}$temp->{{item['field_view']}} }},
+                    @endforeach
+                @endif
+            </div><!--col-->
+        </div><!--form-group-->
+       {%endif%} {%endfor%}
+
+
+    </div><!--col-->
+</div><!--row-->

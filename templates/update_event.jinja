@@ -1,0 +1,25 @@
+<?php namespace {{data['paths']['createEvent']}}\{{data['modelName']}};
+
+    use Illuminate\Queue\SerializesModels;
+    /**
+    * Class {{data['modelName']}}Updated.
+    */
+    class {{data['modelName']}}Updated
+    {
+            use SerializesModels;
+            /**
+            * @var
+            */
+
+
+            public ${{data['modelDotNotation']}} ;
+
+            /**
+            * @param ${{data['modelDotNotation']}}
+            */
+            public function __construct(${{data['modelDotNotation']}})
+            {
+                 $this->{{data['modelDotNotation']}} = ${{data['modelDotNotation']}};
+            }
+    }
+

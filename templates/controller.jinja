@@ -1,0 +1,321 @@
+<?php
+
+    namespace {{data['paths']['controller']}}\{{data['modelName']}};
+
+    use App\Http\Controllers\Controller;
+    use Illuminate\Http\Request;
+    use \Illuminate\Http\Response;
+    use {{data['paths']['createRequest']}}\{{data['modelName']}}\Create{{data['modelName']}};
+    use {{data['paths']['updateRequest']}}\{{data['modelName']}}\Update{{data['modelName']}};
+    use {{data['paths']['repository']}}\{{data['modelName']}}Repository;
+    use {{data['paths']['createEvent']}}\{{data['modelName']}}\{{data['modelName']}}Created;
+    use {{data['paths']['updateEvent']}}\{{data['modelName']}}\{{data['modelName']}}Updated;
+    use {{data['paths']['deleteEvent']}}\{{data['modelName']}}\{{data['modelName']}}Deleted;
+    use Prettus\Repository\Criteria\RequestCriteria;
+    use {{data['paths']['model']}}\{{data['modelName']}};{% set call_names=[] %}
+    {% for model in data['modelsNames'] %}
+    use {{data['paths']['model']}}\{{ model }};{% endfor %}
+
+class {{data['modelName']}}Controller extends Controller
+{
+    /** @var ${{data['modelDotNotation']}}Repository */
+    private ${{data['modelDotNotation']}}Repository;
+
+
+    public function __construct({{data['modelName']}}Repository ${{data['modelDotNotation']}}Repo)
+    {
+    $this->{{data['modelDotNotation']}}Repository = ${{data['modelDotNotation']}}Repo;
+    }
+
+
+    /**
+    * Display a listing of the {{data['modelName']}}.
+    *
+    * @param  Request $request
+    * @return Response | \Illuminate\View\View|Response
+    * @throws \Prettus\Repository\Exceptions\RepositoryException
+    */
+
+    public function index(Request $request)
+    {
+        $this-> {{data['modelDotNotation']}}Repository->pushCriteria(new RequestCriteria($request));
+        $data=$this-> {{data['modelDotNotation']}}Repository {% if data['count'](data['relationNames'])%}
+         ->with({%for item in data['relationNames'] %}{%if data['relationNames'].index(item) ==0 %} "{{item}}"{% else %},"{{item}}" {% endif %}{% endfor %}){% endif %}
+         ->paginate(25);
+        {%for item1 in data['weaknessRelation'] %}
+        ${{item1['related_table']}} = [];
+        foreach ($data as $item) {
+        ${{item1['related_table']}}[$item->id] = [];
+        ${{item1['middleTable']}} ={{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', $item->id)->get();
+        foreach (${{item1['middleTable']}} as $object) {
+        $temp = {{item1['related_model_name']}}::where('id', '=', $object['{{item1['related_class']}}_id'])->get();
+        if (isset($temp[0]))
+          array_push( ${{item1['related_table']}}[$item['id']], $temp[0]);
+        }
+        }{% endfor %}
+
+        return view('backend.{{data['tableName']}}.index'{% if data['count'](data['weakness'])%},compact(
+        {%for item1 in data['weakness'] %}
+           {%if data['weakness'].index(item1) ==0 %}"{{item1}}"{%else %},"{{item1}}" {% endif %}
+        {% endfor %}){% endif %})->with('{{data['tableName']}}', $data);
+    }
+
+    {% if data['count'](data['belongsTo'])%}
+    /*
+    * one to many
+    */
+  {%for item1 in data['belongsTo'] %}
+
+    public function {{item1['related_class']}}(Request $request,$parent_id)
+    {
+
+    return view('backend.{{data['tableName']}}.index')->with('{{data['tableName']}}', $this-> {{data['modelDotNotation']}}Repository
+    {% if data['count'](data['relationNames'])%}
+        ->with({%for item in data['relationNames'] %}{%if data['relationNames'].index(item) ==0 %}
+            "{{item}}"{%else %},"{{item}}"{% endif %}{% endfor %}){% endif %}
+    ->getPaginated(25,['{{item1['related_class']}}_id'=>$parent_id]));
+    }
+ {% endfor %}{% endif %}
+
+
+    {% if data['count'](data['relations']['belongsToMany'])%}
+    /*
+    * many to many
+    */
+    {% for item1 in data['relations']['belongsToMany']%}
+        {% if not data['in_array'](item1['related_class'],call_names)%}
+
+    public function {{item1['related_class']}}(Request $request,$foriegn_id)
+        {
+        $this-> {{data['modelDotNotation']}}Repository->pushCriteria(new RequestCriteria($request));
+        $data=$this-> {{data['modelDotNotation']}}Repository
+        {% if data['count'](data['relationNames'])%}
+            ->with({%for item in data['relationNames'] %}{% if data['relationNames'].index(item)==0 %}
+                "{{item}}"{%else%},"{{item}}"{% endif %}{% endfor %})
+        {% endif %}
+        ->paginate(25);
+
+        foreach ($data as $key => $items) {
+        $temp2 = [];
+        ${{item1['middleTable']}} ={{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', $items->id)->get();
+        foreach (${{item1['middleTable']}} as $item2) {
+        array_push($temp2, $item2->{{item1['related_class']}}_id);
+        }
+        if (!in_array($foriegn_id, $temp2)) {
+        unset($data[$key]);
+        }
+        }
+
+        $part=count($data);
+
+         {%for item1 in data['weaknessRelation'] %}
+        ${{item1['related_table']}} = [];
+        foreach ($data as $item) {
+        ${{item1['related_table']}}[$item->id] = [];
+        ${{item1['middleTable']}} ={{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', $item->id)->get()->toarray();
+        foreach (${{item1['middleTable']}} as $object) {
+        $temp = {{item1['related_model_name']}}::where('id', '=', $object['{{item1['related_class']}}_id'])->get()->toarray();
+        if (isset($temp[0]))
+        array_push( ${{item1['related_table']}}[$item['id']], $temp[0]);
+        }
+        }
+
+      {% endfor %}
+
+
+       return view('backend.{{data['tableName']}}.index' {% if data['count'](data['weakness'])%},compact(
+        {%for item1 in data['weakness'] %}{%if data['weakness'].index(item1) ==0 %}
+        "{{item1}}"{%else %} ,"{{item1}}"{% endif %}{% endfor %}){% endif %})
+        ->with(['{{data['tableName']}}'=> $data,'part'=>$part]);
+    } {% endif %}{% endfor %}{% endif %}
+
+
+    /**
+    * Show the form for creating a new {{data['modelName']}}.
+    *
+    * @return Response | \Illuminate\View\View|Response
+    */
+    public function create()
+    {
+        {%for item1 in data['foreign'] %}
+        ${{item1['table']}} = {{item1['modelName']}}::all();
+        $selected{{item1['modelName']}} = {{item1['modelName']}}::first()?{{item1['modelName']}}::first()->_id:0;
+           {% endfor %}
+        {%for item1 in data['weaknessRelation'] %}
+
+       ${{item1['related_table']}} = {{item1['related_model_name']}}::all();
+       $selected{{item1['related_model_name']}} = [];
+       {% endfor %}
+       {% set enteredCompact= False %}
+
+        return view('backend.{{data['tableName']}}.create' {% if  data['count'](data['foreign']) or data['count'](data['weakness'])%},compact(
+        {%for item1 in data['foreign'] %}{% set enteredCompact= True %}
+        {%if data['foreign'].index(item1) ==0 %}"{{item1['table']}}","selected{{item1['modelName']}}"
+        {%else %} ,"{{item1['table']}}","selected{{item1['modelName']}}"{% endif %}{% endfor %}
+        {%for item1 in data['weakness'] %}{%set key= data['weakness'].index(item1)  %}
+        {%if not data['count'](data['foreign'])%}"{{item1}}","{{data['selectData'][key]}}"{%else %} ,"{{item1}}","{{data['selectData'][key]}}" {% endif %}
+        {% endfor %}){% endif %});
+    }
+
+    /**
+    * Store a newly created {{data['modelName']}} in storage.
+    *
+    * @param Create{{data['modelName']}} $request
+    *
+    * @return Response | \Illuminate\View\View|Response
+    * @throws \Prettus\Validator\Exceptions\ValidatorException
+    */
+    public function store(Create{{data['modelName']}} $request)
+    {
+       {%for item in data['imgFields'] %}
+         if (request()->hasFile('{{item['name']}}_file')) {
+            $path = $request->file('{{item['name']}}_file')->store('public');
+            $request['{{item['name']}}'] = $path;
+        }{%endfor%}
+
+       {%for item in data['checkBoxesFields'] %}
+       $req=$request->only( ["{{item}}"]);
+       if (!$req){
+           $request["{{item}}"]=0;
+       }{%endfor%}
+        $obj=$this-> {{data['modelDotNotation']}}Repository->create($request->only( [ {% for f in data['columns'] %}{%if f['inForm']==True%}"{{ f['name'] }}",{% endif %}{% endfor %}]));
+        {%for item1 in data['weaknessRelation'] %}
+        if (isset($request->all()['{{item1['related_table']}}'])) {
+            foreach ($request->all()['{{item1['related_table']}}'] as $item) {
+            if (is_null($item))
+            break;
+            $obj1 = new {{item1['middleTableModel']}}();
+            $obj1->{{data['modelDotNotation']}}_id = $obj->id;
+            $obj1->{{item1['related_class']}}_id = $item;
+            $obj1->save();
+            }
+        }
+      {% endfor %}
+      event(new {{data['modelName']}}Created($obj));
+      return redirect()->route('admin.{{data['modelDotNotation']}}.index')->withFlashSuccess(__('alerts.frontend.{{data['modelDotNotation']}}.saved'));
+    }
+
+    /**
+    * Display the specified {{data['modelName']}}.
+    *
+    * @param {{data['modelName']}} ${{data['modelDotNotation']}}
+    * @return \Illuminate\View\View|Response
+    * @internal param int $id
+    *
+    */
+    public function show({{data['modelName']}} ${{data['modelDotNotation']}})
+    {   {% for item in data['relations']['belongsToMany']%}
+        ${{item['related_model_variable_name']}}_ids = [];
+        ${{item['middleTable']}} = {{item['middleTableModel']}}::where('{{item['foreignKey']}}', '=', ${{data['modelDotNotation']}}->id)->get();
+        foreach (${{item['middleTable']}} as $item) {
+            array_push(${{item['related_model_variable_name']}}_ids, $item->{{item['otherKey']}});
+        }
+        ${{item['related_table']}}={{item['related_model_name']}}::whereIn('id',${{item['related_model_variable_name']}}_ids)->get();{% endfor %}{% for item in data['relations']['hasMany']%}
+        ${{item['related_table']}}={{item['related_model_name']}}::where('{{item['foreignKey']}}', '=', ${{data['modelDotNotation']}}->id)->get();{%endfor%}{% for item in data['foreign']%}
+        ${{item['lowerModelName']}}={{item['modelName']}}::where('id', '=', ${{data['modelDotNotation']}}->{{item['field_name']}})->get();
+        ${{data['modelDotNotation']}}->{{item['field_name']}}=${{item['lowerModelName']}}[0]->{{item['field_view']}};{%endfor%}
+
+        return view('backend.{{data['tableName']}}.show' {%if data['count'](data['relatedTables'])  %} ,compact( {%for item1 in data['relatedTables'] %}{%if data['relatedTables'].index(item1) ==0 %}"{{item1}}"{%else %} ,"{{item1}}"{% endif %}{% endfor %}){%endif%})->with('{{data['modelDotNotation']}}', ${{data['modelDotNotation']}});
+    }
+
+
+    /**
+    * Show the form for editing the specified {{data['modelName']}}.
+    *
+    * @param {{data['modelName']}} ${{data['modelDotNotation']}}
+    * @return \Illuminate\View\View|Response
+    * @internal param int $id
+    *
+    */
+    public function edit({{data['modelName']}} ${{data['modelDotNotation']}})
+    {
+        {%for item1 in data['foreign'] %}
+        ${{item1['table']}} = {{item1['modelName']}}::all();
+        $selected{{item1['modelName']}} = ${{data['modelDotNotation']}}->{{item1['lowerModelName']}}_id;
+         {% endfor %}
+
+
+
+         {%for item1 in data['weaknessRelation'] %}
+        ${{item1['related_table']}} = {{item1['related_model_name']}}::all();
+        $selected{{item1['related_model_name']}} = [];
+        $related_items = {{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', ${{data['modelDotNotation']}}->id)->get();
+        foreach ($related_items as $related_item) {
+           array_push($selected{{item1['related_model_name']}}, $related_item->{{item1['otherKey']}});
+        }{%endfor%}
+         {% set enteredCompact=False %}
+
+                return view('backend.{{data['tableName']}}.edit'{% if data['count'](data['foreign']) or data['count'](data['weakness'])  %},compact(
+        {% for  item1 in data['foreign']%} {% set enteredCompact=True %}{%if data['foreign'].index(item1) == 0 %}
+        "{{item1['table']}}","selected{{item1['modelName']}}"{%else%}
+         ,"{{item1['table']}}","selected{{item1['modelName']}}"{%endif%} {%endfor%} {% if data['count'](data['weakness'])  %}
+   {%for item1 in data['weakness'] %}{%set key= data['weakness'].index(item1)  %}
+        {%if not data['count'](data['foreign'])%}"{{item1}}","{{data['selectData'][key]}}"{%else %} ,"{{item1}}","{{data['selectData'][key]}}" {% endif %}{% endfor %}{% endif %}
+
+         {{")"}}{%endif%}
+        {{")"}}->with('{{data['modelDotNotation']}}', ${{data['modelDotNotation']}});
+    }
+
+
+    /**
+    * Update the specified {{data['modelName']}} in storage.
+    *
+    * @param Update{{data['modelName']}} $request
+    *
+    * @param {{data['modelName']}} ${{data['modelDotNotation']}}
+    * @return \Illuminate\View\View|Response
+    * @internal param int $id
+    * @throws \Prettus\Validator\Exceptions\ValidatorException
+    */
+    public function update(Update{{data['modelName']}}  $request, {{data['modelName']}} ${{data['modelDotNotation']}})
+    {
+        {%for item in data['imgFields'] %}
+        if (request()->hasFile('{{item['name']}}_file')) {
+            $path = $request->file('{{item['name']}}_file')->store('public');
+            $request['{{item['name']}}'] = $path;
+        }{%endfor%}
+
+       {%for item in data['checkBoxesFields'] %}
+       $req=$request->only( ["{{item}}"]);
+       if (!$req){
+           $request["{{item}}"]=0;
+       }{%endfor%}
+       $obj=$this->{{data['modelDotNotation']}}Repository->update(${{data['modelDotNotation']}}, $request->all());
+
+       {%for item1 in data['relations']['belongsToMany'] %} {%if item1[data['weakness']]%}
+       if (isset($request->all()['{{item1['related_table']}}'])) {
+        $deleted = {{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', ${{data['modelDotNotation']}}->id)->get();
+        foreach ($deleted as $item) {
+           $item->delete();
+        }
+
+        foreach ($request->all()['{{item1['related_table']}}'] as $item) {
+        if (is_null($item))
+        break;
+        $relate_item = new {{item1['middleTableModel']}}();
+        $relate_item->{{data['modelDotNotation']}}_id = ${{data['modelDotNotation']}}->id;
+        $relate_item->{{item1['related_class']}}_id = $item;
+        $relate_item->save();
+        }
+    }    {%endif%}{%endfor%}
+    event(new {{data['modelName']}}Updated($obj));
+    return redirect()->route('admin.{{data['modelDotNotation']}}.index')->withFlashSuccess(__('alerts.frontend.{{data['modelDotNotation']}}.updated'));
+
+    }
+
+    /**
+    * Remove the specified {{data['modelName']}} from storage.
+    *
+    * @param {{data['modelName']}} ${{data['modelDotNotation']}}
+    * @return \Illuminate\View\View|Response
+    * @internal param int $id
+    *
+    */
+    public function destroy({{data['modelName']}} ${{data['modelDotNotation']}})
+    {
+        $obj=$this->{{data['modelDotNotation']}}Repository->delete(${{data['modelDotNotation']}});
+        event(new {{data['modelName']}}Deleted($obj));
+        return redirect()->back()->withFlashSuccess(__('alerts.frontend.{{data['modelDotNotation']}}.deleted'));
+    }
+
+}

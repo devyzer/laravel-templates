@@ -1,0 +1,119 @@
+<?php
+
+namespace {{data['paths']['APIController']}};
+
+use {{data['paths']['APICreateRequest']}}\Create{{data['modelName']}}APIRequest;
+use {{data['paths']['APIUpdateRequest']}}\Update{{data['modelName']}}APIRequest;
+use {{data['paths']['model']}}\{{data['modelName']}};
+use {{data['paths']['repository']}}\{{data['modelName']}}Repository;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;{% for item1 in data['foreign'] %}
+use App\Models\ {{ item1['modelName'] }};{%endfor%}{% for item1 in data['relations']['belongsTo'] %}
+use App\Models\ {{ item1['related_model_name'] }};{%endfor%}
+
+
+/**
+* Class {{data['modelName']}}APIController
+* @package {{data['paths']['APIController']}}
+*/
+class {{data['modelName']}}APIController extends Controller
+{
+    /** @var  {{data['modelName']}}Repository */
+    private ${{data['modelVariable']}}Repository;
+    /** @var  {{data['modelName']}}Model */
+    private ${{data['modelVariable']}}Model;
+
+
+    public function __construct({{data['modelName']}}Repository ${{data['modelVariable']}}Repo,{{data['modelName']}} ${{data['modelVariable']}})
+    {
+        $this->{{data['modelVariable']}}Repository = ${{data['modelVariable']}}Repo->skipCache(true);
+        $this->{{data['modelVariable']}}Model = ${{data['modelVariable']}};
+
+    }
+
+    /**
+    * Display a listing of the {{data['modelName']}}.
+    * GET|HEAD /{{data['tableName']}}
+    *
+    * @param Request $request
+    * @return Response | \Illuminate\View\View|Response
+    * @throws \Prettus\Repository\Exceptions\RepositoryException
+    */
+    public function index(Request $request)
+    {
+
+        ${{data['tableName']}} = $this->{{data['modelVariable']}}Repository->all();
+        return response()->json(['data' => ${{data['tableName']}},'{{data['modelPlural']}} retrieved successfully']);
+    }
+
+    /**
+    * Store a newly created {{data['modelName']}} in storage.
+    * POST /{{data['tableName']}}
+    *
+    * @param Create{{data['modelName']}}APIRequest $request
+    *
+    * @return Response | \Illuminate\View\View|Response
+    */
+    public function store(Create{{data['modelName']}}APIRequest $request)
+    {
+        $input = $request->all();
+        $this->{{data['modelVariable']}}Repository->create($input);
+        return response()->json([ '{{data['modelName']}} saved successfully']);
+    }
+
+    /**
+    * Display the specified {{data['modelName']}}.
+    * GET|HEAD /{{data['tableName']}}/{id}
+    *
+    * @param  int $id
+    *
+    * @return Response | \Illuminate\View\View|Response
+    * @throws \Prettus\Repository\Exceptions\RepositoryException
+    */
+    public function show($id)
+    {
+        /** @var {{data['modelName']}} ${{data['modelVariable']}} */
+   //   ${{data['modelVariable']}} = $this->{{data['modelVariable']}}Repository->findByField('id',$id);
+        ${{data['modelVariable']}} = $this-> {{data['modelVariable']}}Model->find($id);
+        return response()->json(['data' => ${{data['modelVariable']}},'{{data['modelName']}} retrieved successfully']);
+
+    }
+
+    /**
+    * Update the specified {{data['modelName']}} in storage.
+    * PUT/PATCH /{{data['tableName']}}/{id}
+    *
+    * @param  int $id
+    * @param Update{{data['modelName']}}APIRequest $request
+    *
+    * @return Response | \Illuminate\View\View|Response
+    */
+    public function update($id, Update{{data['modelName']}}APIRequest $request)
+    {
+        $input = $request->all();
+        /** @var {{data['modelName']}} ${{data['modelVariable']}} */
+        ${{data['modelVariable']}} = $this-> {{data['modelVariable']}}Model->find($id);
+        ${{data['modelVariable']}} = $this->{{data['modelVariable']}}Repository->update( ${{data['modelVariable']}},$input);
+        return response()->json([ '{{data['modelName']}} updated successfully' ]);
+    }
+
+    /**
+    * Remove the specified {{data['modelName']}} from storage.
+    * DELETE /{{data['tableName']}}/{id}
+    *
+    * @param  int $id
+    *
+    * @return Response | \Illuminate\View\View|Response
+    * @throws \Exception
+    */
+    public function destroy($id)
+    {
+        /** @var {{data['modelName']}} ${{data['modelVariable']}} */
+        ${{data['modelVariable']}} = $this-> {{data['modelVariable']}}Model->find($id);
+        ${{data['modelVariable']}}->delete();
+
+        return response()->json('{{data['modelName']}} deleted successfully');
+    }
+
+}

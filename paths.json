@@ -1,0 +1,20 @@
+{
+  "model": "App/Models",
+  "createEvent": "App/Events/Backend",
+  "updateEvent": "App/Events/Backend",
+  "deleteEvent": "App/Events/Backend",
+  "listener": "App/Listeners/Backend",
+  "repository": "App/Repositories/Backend",
+  "migrate": "database/migrations",
+  "createRequest": "App/Http/Requests/Backend",
+  "updateRequest": "App/Http/Requests/Backend",
+  "controller": "App/Http/Controllers/Backend",
+  "route": "routes/backend",
+  "breadcrumbs": "routes/breadcrumbs/backend",
+  "lang": "resources/lang",
+  "view": "resources/views/backend",
+  "APICreateRequest": "App/Http/Requests/API",
+  "APIUpdateRequest": "App/Http/Requests/API",
+  "APIController": "App/Http/Controllers/API",
+  "APIRoute": "routes"
+}

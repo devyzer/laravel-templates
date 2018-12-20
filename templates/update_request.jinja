@@ -1,0 +1,40 @@
+<?php
+  namespace {{data['paths']['createRequest']}}\{{data['modelName']}};
+  {% if   data['count'](data['translatable'])%}
+  use XLabTechs\Translatable\TranslatableFormRequest;{% else %}
+  use Illuminate\Foundation\Http\FormRequest;{% endif %}
+  use Illuminate\Support\Facades\Gate;
+  use Illuminate\Validation\Rule;
+
+
+  class Update{{data['modelName']}} extends FormRequest{
+
+        /**
+        * Determine if the user is authorized to make this request.
+        *
+        * @return bool
+        */
+
+        public function authorize()
+        {
+            return true;
+            //   return Gate::allows('admin.{{data['modelDotNotation']}}.edit', $this->{{data['modelVariable']}});
+        }
+
+        /**
+        * Get the validation rules that apply to the request.
+        *
+        * @return array
+        */
+
+        public function rules()
+        {
+            return [{% for column in data['dbColumns'] %}
+             {%if column['front_type']=="img" or column['front_type']=="image"%}
+            //'{{ column['name']}}_file'=>'{{column['validations']}}', {%else%}
+             '{{ column['name'] }}'=>'{{column['validations']}}',{%endif%}{%endfor%}
+
+            ];
+        }
+
+}

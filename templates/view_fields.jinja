@@ -1,0 +1,83 @@
+<div class="row mt-4 mb-4">
+    <div class="col">
+        {%for item in data['columns'] %}{%if item['inForm']==True %}
+        <div class="form-group row">
+            {{'{{'}} html()->label(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))->class('col-md-2 form-control-label')->for('{{item['name']}}') }}
+            <div class="col-md-10">
+                {% if "foreign" in item%}
+                    <select class="form-control m-bot15" name="{{item['name']}}" {%if item['frontendRules'][0]=="required" %} required  {%endif%}>
+                         <option value="">select...</option>
+                        {{'@'}}{{'if'}}  (${{item['foreign']['table']}}->count())
+                        {{'@'}}{{'foreach'}}(${{item['foreign']['table']}} as $temp)
+                                <option value="{{"{{"}} $temp->id }}" {{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})&& ${{data['modelDotNotation']}}->{{item['name']}} == $temp->id ? 'selected="selected"' : '' }}>{{"{{"}} $temp->{{item['foreign']['field_view']}} }}</option>
+                        {{'@'}}{{'endforeach'}}
+                        {{'@'}}{{'endif'}}
+                    </select>
+                {% elif item['front_type']=="checkbox" %}
+                    <label class="switch switch-3d switch-primary">
+                        {{'{{'}} html()->checkbox('{{item['name']}}', isset(${{data['modelDotNotation']}}->{{item['name']}}) and ${{data['modelDotNotation']}}->{{item['name']}}==1 ?true: false, 1)->class('switch-input') }}
+                        <span class="switch-slider" data-checked="yes" data-unchecked="no" aria-selected="true"></span>
+                    </label>
+                {% elif item['front_type']=="img" or item['front_type']=="image"%}
+                        {{"{{"}} html()->text('{{item['name']}}_file')
+                          ->class('form-control-file')
+                          ->type("file")
+                            ->placeholder(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))
+                       }}
+
+
+                    @if (!empty(${{data['modelDotNotation']}}) && ${{data['modelDotNotation']}}->{{item['name']}})
+                        <div>{!! html()->img(${{data['modelDotNotation']}}->{{item['name']}}_url)->class('img-thumbnail')  !!}</div>
+                    @endif
+
+
+                {% elif item['front_type']=="Integer" %}
+                    <input name="{{item['name']}}" type="number" value="{{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})?${{data['modelDotNotation']}}->{{item['name']}}:  {%if 'default' in item%} {{item['default']}} {%else%}0{%endif%} }}" class="form-control" id="{{item['name']}}"  {%if "min" in item['frontendRules'] %}   min ="{{item['frontendRules']['min']}}"{%endif%} {%if "max" in item['frontendRules'] %} max ="{{item['frontendRules']['max']}}" {%endif%}{%if item['frontendRules'][0]=="required" %} required  {%endif%} >
+                {% elif item['front_type']=="decimal" %}
+                    <input name="{{item['name']}}" type="number" value="{{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})?${{data['modelDotNotation']}}->{{item['name']}}: {%if 'default' in item%}{{item['default']}}{%else%}0{%endif%} }}" class="form-control" id="{{item['name']}}" {%if "min" in item['frontendRules'] %} min ="{{item['frontendRules']['min']}}"{%endif%}  {%if "max" in item['frontendRules'] %} max ="{{item['frontendRules']['max']}}" {%endif%}{%if item['frontendRules'][0]=="required"%} required  {%endif%} >
+                {% elif item['front_type']=="select" or item['front_type']=='multiselect' %}
+                    {{'{{'}} html()->{{item['front_type']}}('{{item['name']}}',[ {%for key,el in item['selected_data'].items()%}  '{{key}}'=>'{{el}}', {% endfor%}])
+                    ->class('form-control')
+                    ->placeholder(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}')){%if "frontendRules"in item and item['frontendRules'][0]=='required'%}
+                        ->required(){%endif%}
+                    }}
+
+                {%  else %}
+                        {{'{{'}} html()->{{item['front_type']}}('{{item['name']}}')
+                        ->class('form-control')
+                        ->placeholder(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))
+                        {% if "min" in item['frontendRules']%}
+                            ->attribute('minlength', {{item['frontendRules']['min']}}){%endif%}
+                        {% if "max" in item['frontendRules']%}
+                            ->attribute('maxlength', {{item['frontendRules']['max']}}){%endif%}
+                      {% if item['frontendRules'][0]=='required'%}
+                            ->required() {%endif%}
+                         }}
+                {%endif%}
+
+            </div><!--col-->
+        </div><!--form-group-->
+       {%endif%} {%endfor%}
+
+        <!--end-columns-->
+             {%for item1 in data['relations']['belongsToMany']%}{%if item1['inForm']==True %}{% if item1['weakness']==True%}
+                    <div class="form-group row">
+                        {{"{{"}}html()->label(__('{{item1["related_model_name_plural"]}}'))->class('col-md-2 form-control-label')->for('{{item1["related_table"]}}') }}
+                        <div class="col-md-10">
+                            <select class="form-control m-bot15" name="{{item1["related_table"]}}[]" multiple="multiple">
+                                <option    value=""   >None</option>
+                                {{"@"}}{{"if"}}  (${{item1["related_table"]}}->count())
+                                {{"@"}}{{"foreach"}}(${{item1["related_table"]}} as $temp)
+                                        <option value="{{"{{"}} $temp->id }}" {{"{{"}}{{"in_array"}}{{"("}}$temp->id,$selected{{item1['related_model_name']}}) ? 'selected="selected"' : '' }}>{{"{{"}} $temp->{{item1['field_view']}} }}</option>
+
+                                {{"@"}}{{"endforeach"}}
+                                {{"@"}}{{"endif"}}
+                            </select>
+                        </div><!--col-->
+                    </div><!--form-group-->
+             {%endif%}  {%endif%} {%endfor%}
+
+
+
+    </div><!--col-->
+</div><!--row-->

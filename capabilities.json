@@ -1,0 +1,21 @@
+{
+  "model": true,
+  "createEvent": true,
+  "updateEvent": true,
+  "deleteEvent": true,
+  "listener": true,
+  "repository": true,
+  "migrate": true,
+  "createRequest": true,
+  "updateRequest": true,
+  "controller": true,
+  "route": true,
+  "breadcrumbs":true,
+  "lang":true,
+  "view":true,
+  "APICreateRequest": false,
+  "APIUpdateRequest": false,
+  "APIController": false,
+  "APIRoute": true
+
+}

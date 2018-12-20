@@ -1,0 +1,27 @@
+      ,
+      //start_{{data['modelName']}}_start
+            '{{ data['tableName'] }}' => [
+            'management' => '{{data['title']}} Management',
+            'create'     => 'Create {{data['modelBaseName']}}',
+            'view' => 'View {{data['modelBaseName']}}',
+            'edit'       => 'Edit {{data['modelBaseName']}}',
+
+            'table' => [{%for col in data['columns'] %}{% if not col['type']=='text' %}
+                    '{{ col['name'] }}' => "{{ col['title'] }}", {% endif %}{% endfor %}
+                    'sort'  => 'Sort',
+                    'total' => '{{data['title']}} total|{{data['title']}} total',
+            ],
+
+
+            'content' => [
+                    'created_at'    => 'Created At',
+                     'deleted_at'    => 'Deleted At',
+                    'last_updated'  => 'Last Update',{%for col in data['columns'] %}{% if  col['type']=='text' %}
+                   '{{ col['name'] }}' => "{{ col['title'] }}", {% endif %} {% endfor %}
+
+
+                  ]
+            ]
+            //end_{{data['modelName']}}_end
+
+            // Do not delete me :) I'm used for auto-generation

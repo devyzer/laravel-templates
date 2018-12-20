@@ -1,0 +1,35 @@
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+        <tr>{%for item in data['columns']%}{%if item['inIndex']==True %}
+                <th>{{'{{'}} __('labels.backend.{{data['tableName']}}.table.{{item['name']}}') }}</th>{% endif %}{% endfor %}
+                {%for item in data['relations']['belongsToMany']%}{%if item['inIndex']==True %}   {% if item['weakness']==True %}
+                <th>{{'{{'}} __('{{item['related_model_name_plural']}}') }}</th>{% endif %}{% endif %}{% endfor %}
+            <th>{{'{{'}} __('labels.general.actions') }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{'@'}}{{'foreach'}} (${{data['tableName']}} as ${{ data['modelDotNotation']}})
+        <tr>
+            {%for item in data['columns']%}{%if item['inIndex']==True %}{% if 'foreign' in item %}
+                <td>{{"{"}}!! ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}? ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}->{{item['foreign']['field_view']}} : 'N/A' !!}</td>{% elif 'dbtype' in item and item['dbtype']=="enum" %}
+                {{"@"}}{{"php"}}   ${{item['name']}}_arr=[{%for key,el in item['selected_data'].items() %} '{{key}}'=>'{{el}}', {% endfor %}];{{"@"}}{{"endphp"}}
+                <td>{{'{{'}} ${{ data['modelDotNotation']}}->{{item['name']}} ? ${{item['name']}}_arr [${{ data['modelDotNotation']}}->{{item['name']}} ]:'N/A'}}</td> {% elif item['front_type']=="img" or item['front_type']=="image"%}
+                <td style="width:30px">
+                    @if (!empty(${{data['modelDotNotation']}}) && ${{data['modelDotNotation']}}->{{item['name']}})
+                       {!! html()->img(${{data['modelDotNotation']}}->{{item['name']}}_url)->class('img-fluid')  !!}
+                   @else
+                       {!! html()->i()->class('fa fa-image fa-3x')  !!}
+                   @endif
+               </td>{% else %}
+                <td>{{'{{'}}  ${{data['modelDotNotation']}}->{{item['name']}} }}</td> {% endif %}{% endif %} {% endfor %}
+                {%for item1 in data['relations']['belongsToMany']%}{%if item1['inIndex']==True %}{% if item1['weakness']==True %}
+                <td>{{"@"}}{{"foreach"}} (${{item1['related_table']}}[${{data['modelDotNotation']}}->id] as $item){{"{{"}}$item['{{item1['field_view']}}']}}{{"@"}}{{"endforeach"}}</td>{% endif %}{% endif %}{% endfor %}
+
+               <td>{{'{'}}!! ${{ data['modelDotNotation']}}->action_buttons !!}</td>
+        </tr>
+
+        {{'@'}}{{'endforeach'}}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,7 @@
+        {{'{{'}}--start_{{data["modelName"]}}_start--{{'}}'}}
+            <li class="nav-item">
+                <a class="nav-link {{'{{'}} active_class(Active::checkUriPattern('admin/{{data['tableName']}}')) }}" href=" {{'{{'}} route('admin.{{data['modelDotNotation']}}.index') }}"><i class="icon-list"></i> {{'{{'}} __('menus.backend.sidebar.{{data['tableName']}}') }}</a>
+            </li>
+            {{'{{'}}--end_{{data["modelName"]}}_end--{{'}}'}}
+
+{{'{{'}}--Do not delete me :) I'm used for auto-generation--}}

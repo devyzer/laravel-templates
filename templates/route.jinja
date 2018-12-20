@@ -1,0 +1,20 @@
+<?php
+
+    /**
+    * {{data['modelName']}} Management
+    * All route names are prefixed with 'admin.{{data['modelDotNotation']}}'.
+    */
+    Route::group([
+    'namespace' => '{{data['modelName']}}',
+    'middleware' => 'role:administrator',
+    ], function () {
+    /*
+    * {{data['modelName']}} CRUD
+    */
+    Route::resource('{{data['modelDotNotation']}}', '{{data['modelName']}}Controller');{%for item in data['relations']['belongsTo'] %}
+    Route::get('{{item['related_model_variable_name']}}/{id}/{{data['tableName']}}', '{{data['modelName']}}Controller@{{item['related_model_variable_name']}}')->name('{{data['modelDotNotation']}}.{{item['related_model_variable_name']}}');{% endfor %}{%for item in data['foreign'] %}
+    Route::get('{{item['lowerModelName']}}/{id}/{{data['tableName']}}', '{{data['modelName']}}Controller@{{item['lowerModelName']}}')->name('{{data['modelDotNotation']}}.{{item['lowerModelName']}}');{% endfor %}{%for item in data['relations']['belongsToMany'] %}
+    Route::get('{{item['related_class']}}/{id}/{{data['tableName']}}', '{{data['modelName']}}Controller@{{item['related_class']}}')->name('{{data['modelDotNotation']}}.{{item['related_class']}}');{% endfor %}
+
+});
+

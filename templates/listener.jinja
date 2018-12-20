@@ -1,0 +1,60 @@
+<?php
+namespace {{data['paths']['listener']}};
+
+/**
+* Class {{data['modelName']}}EventListener.
+*/
+/**
+* Class {{data['modelName']}}Created.
+*/
+class {{data['modelName']}}EventListener
+
+{
+    /**
+    * @param $event
+    */
+    public function onCreated($event)
+    {
+    \Log::info('{{data['modelName']}} Created');
+    }
+
+    /**
+    * @param $event
+    */
+        public function onUpdated($event)
+        {
+        \Log::info('{{data['modelName']}}  Updated');
+        }
+
+    /**
+    * @param $event
+    */
+    public function onDeleted($event)
+    {
+    \Log::info('{{data['modelName']}} Deleted');
+    }
+
+    /**
+    * Register the listeners for the subscriber.
+    *
+    * @param \Illuminate\Events\Dispatcher $events
+    */
+    public function subscribe($events)
+    {
+            $events->listen(
+            \{{data['paths']['createEvent']}}\{{data['modelName']}}\{{data['modelName']}}Created::class,
+            '{{data['paths']['listener']}}\{{data['modelName']}}EventListener@onCreated'
+            );
+
+            $events->listen(
+            \{{data['paths']['updateEvent']}}\{{data['modelName']}}\{{data['modelName']}}Updated::class,
+            '{{data['paths']['listener']}}\{{data['modelName']}}EventListener@onUpdated'
+            );
+
+            $events->listen(
+            \{{data['paths']['deleteEvent']}}\{{data['modelName']}}\{{data['modelName']}}Deleted::class,
+            '{{data['paths']['listener']}}\{{data['modelName']}}EventListener@onDeleted'
+            );
+    }
+}
+

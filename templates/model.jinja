@@ -1,0 +1,154 @@
+<?php
+
+    namespace {{data['paths']['model']}};
+
+    use Illuminate\Database\Eloquent\Model;
+    use {{data['paths']['model']}}\Traits\Attribute\{{data['modelName']}}Attribute;
+    use Sofa\Eloquence\Eloquence;{% if data['metable']==True%}
+    use Sofa\Eloquence\Metable;{%endif%}{% if data['count'](data['sluggable'])%}
+    use Spatie\Sluggable\HasSlug;
+    use Spatie\Sluggable\SlugOptions;{% endif %}{% if data['hasSoftDelete']%}
+    use Illuminate\Database\Eloquent\SoftDeletes;
+    use Iatstuti\Database\Support\CascadeSoftDeletes;{% endif %}{% if data['count'](data['translatable'])%}
+    use XLabTechs\Translatable\Traits\HasTranslations;{% endif %}
+    use Storage;
+
+    class {{data['modelName']}} extends Model{
+        use {{data['modelName']}}Attribute, Eloquence{% if data['metable']==True%}, Metable{%endif%}{% if data['hasSoftDelete']%}, SoftDeletes, CascadeSoftDeletes {% endif %}{% if data['count'](data['translatable'])%}, HasTranslations {% endif %}{% if data['count'](data['sluggable'])%}, HasSlug {% endif %};
+
+        {% if data['count'](data['sluggable'])%}
+        /**
+        * Get the options for generating the slug.
+        */
+
+        public function getSlugOptions() : SlugOptions
+        {
+            return SlugOptions::create()
+            ->generateSlugsFrom('{{data['sluggable'][0]}}')
+            ->saveSlugsTo('{{data['sluggable'][1]}}');
+        }
+        {% endif %}
+
+        /**
+        * The attributes that are mass assignable.
+        *
+        * @var array
+        */
+
+        protected $fillable = [ {% for f in data['fillable'] %}
+            "{{ f }}",{% endfor %}
+        ];
+        {% if data['timestamp'] ==True%}
+        public $timestamps =["create_at","update_at"];{%else%}
+        public $timestamps =false;{% endif%}
+
+        {% if data['hasSoftDelete'] ==True%}
+        /**
+         * The attributes that should be mutated to dates.
+         *
+         * @var array
+        */
+        protected $dates = ['deleted_at' {%for item in data['dates'] %}, "{{item}}"{%endfor%}];
+        protected $cascadeDeletes = [{%for item in data['softDeleteData'] %}'{{item['relationName']}}',{%endfor%}];{% else %}
+        /**
+         * The attributes that should be mutated to dates.
+         *
+         * @var array
+        */
+        protected $dates = [{%for item in data['dates'] %}"{{item}}", {%endfor%}]; {% endif %}
+
+        /**
+         * The table associated with the model.
+         *
+         * @var string
+        */
+        protected $table = '{{data['tableName']}}';
+
+        /**
+        * Get the key name for route model binding.
+        *
+        * @return string
+        */
+        public function getRouteKeyName()
+        {
+           return 'id';
+        }
+
+        {% if data['count'](data['relations'])or data['count'](data['foreign']) %}
+
+        {%for item in data['imgFields'] %}
+        public function get{{item['title']}}UrlAttribute()
+         {
+            return  !empty($this->{{item['name']}}) ? Storage::url($this->{{item['name']}}) : null;
+         }
+        {%endfor%}
+
+
+
+        // ***********************************************************
+        // ***********************************************************
+        // ************************ RELATIONS ************************
+        // ***********************************************************
+        // ***********************************************************
+        {% if data['count'](data['relations']['hasMany'])%}
+        {% for item in data['relations']['hasMany'] %}
+        /**
+        * Get all the {{ item['related_table'] }} for the {{data['modelName']}}.
+        * @return \Illuminate\Database\Eloquent\Relations\HasMany
+        */
+        public function {{ item['name'] }}() {
+            return $this->hasMany({{ item['related_model_name'] }}::class)->latest();
+        }
+        {% endfor %}{% endif %}
+
+        {% if data['count'](data['relations']['belongsToMany'])%}
+        {% for item in data['relations']['belongsToMany'] %}
+        /**
+        * Get all the {{ item['related_table'] }} for the {{data['modelName']}}.
+        * @return \Illuminate\Database\Eloquent\Relations\belongsToMany
+        */
+        public function {{ item['name'] }}() {
+            return $this->belongsToMany({{ item['related_model_name'] }}::class,'{{ item['middleTable'] }}'){%if data['count'](item['pivotFields'])%}->withPivot([{%for field in item['pivotFields']%} '{{field}}',{%endfor%}]){%endif%};
+        }
+        {% endfor %}{% endif %}
+
+        {% if data['count'](data['relations']['belongsTo'])%}
+        {% for item in data['relations']['belongsTo'] %}
+        * Get  the {{ item['related_model_name'] }} that owns the {{data['modelName']}}.
+        * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+        */
+        public function {{ item['related_class'] }}() {
+            return $this->belongsTo({{ item['related_model_name'] }}::class);
+        }
+        {% endfor%}{% endif%}
+
+         {% if data['count'](data['foreign'])%}
+        {% for item in data['foreign'] %}
+           /**
+        * Get  the {{ item['modelName'] }} that owns the {{data['modelName']}}.
+        * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+        */
+        public function {{ item['lowerModelName'] }}() {
+            return $this->belongsTo({{ item['modelName'] }}::class);
+        }
+        {% endfor%}{% endif%}
+
+        {% endif%}{% if data['hasSoftDelete'] ==True%}
+        // ***********************************************************
+        // ***********************************************************
+        // ************************CASCADE  RELATIONS ****************
+        // ***********************************************************
+        // ***********************************************************
+
+        {% for item in data['softDeleteData'] %}
+        /**
+        * Cascade Deletes for {{item["name"]}} relation
+        * @return \Illuminate\Database\Eloquent\Relations\hasMany
+        */
+
+        public function {{item["relationName"]}}() {
+            return $this->hasMany({{item["modelName"]}}::class,"{{item["foreignKey"]}}","id");
+        }
+        {% endfor%}{% endif%}
+
+    }
