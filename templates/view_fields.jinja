@@ -31,7 +31,7 @@
                     @endif
 
 
-                {% elif item['front_type']=="Integer" %}
+                {% elif item['front_type']=="Integer" or item['front_type']=="integer" %}
                     <input name="{{item['name']}}" type="number" value="{{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})?${{data['modelDotNotation']}}->{{item['name']}}:  {%if 'default' in item%} {{item['default']}} {%else%}0{%endif%} }}" class="form-control" id="{{item['name']}}"  {%if "min" in item['frontendRules'] %}   min ="{{item['frontendRules']['min']}}"{%endif%} {%if "max" in item['frontendRules'] %} max ="{{item['frontendRules']['max']}}" {%endif%}{%if item['frontendRules']['required']=="required" %} required  {%endif%} >
                 {% elif item['front_type']=="decimal" %}
                     <input name="{{item['name']}}" type="number" value="{{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})?${{data['modelDotNotation']}}->{{item['name']}}: {%if 'default' in item%}{{item['default']}}{%else%}0{%endif%} }}" class="form-control" id="{{item['name']}}" {%if "min" in item['frontendRules'] %} min ="{{item['frontendRules']['min']}}"{%endif%}  {%if "max" in item['frontendRules'] %} max ="{{item['frontendRules']['max']}}" {%endif%}{%if item['frontendRules']['required']=="required"%} required  {%endif%} >
