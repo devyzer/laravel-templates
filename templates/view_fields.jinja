@@ -4,7 +4,7 @@
         <div class="form-group row">
             {{'{{'}} html()->label(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))->class('col-md-2 form-control-label')->for('{{item['name']}}') }}
             <div class="col-md-10">
-                {% if "foreign" in item%}
+                {% if "foreign" in item and item["foreign"] %}
                     <select class="form-control m-bot15" name="{{item['name']}}" {%if item['frontendRules']['required']=="required" %} required  {%endif%}>
                          <option value="">select...</option>
                         {{'@'}}{{'if'}}  (${{item['foreign']['table']}}->count())

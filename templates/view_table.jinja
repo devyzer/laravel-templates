@@ -11,7 +11,7 @@
         <tbody>
         {{'@'}}{{'foreach'}} (${{data['tableName']}} as ${{ data['modelDotNotation']}})
         <tr>
-            {%for item in data['columns']%}{%if item['inIndex']==True %}{% if 'foreign' in item %}
+            {%for item in data['columns']%}{%if item['inIndex']==True %}{% if 'foreign' in item and item["foreign"]%}
                 <td>{{"{"}}!! ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}? ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}->{{item['foreign']['field_view']}} : 'N/A' !!}</td>{% elif 'dbtype' in item and item['dbtype']=="enum" %}
                 {{"@"}}{{"php"}}   ${{item['name']}}_arr=[{%for key,el in item['selected_data'].items() %} '{{key}}'=>'{{el}}', {% endfor %}];{{"@"}}{{"endphp"}}
                 <td>{{'{{'}} ${{ data['modelDotNotation']}}->{{item['name']}} ? ${{item['name']}}_arr [${{ data['modelDotNotation']}}->{{item['name']}} ]:'N/A'}}</td> {% elif item['front_type']=="img" or item['front_type']=="image"%}
