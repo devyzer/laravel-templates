@@ -211,9 +211,11 @@ class {{data['modelName']}}Controller extends Controller
             array_push(${{item['related_model_variable_name']}}_ids, $item->{{item['otherKey']}});
         }
         ${{item['related_table']}}={{item['related_model_name']}}::whereIn('id',${{item['related_model_variable_name']}}_ids)->get();{% endfor %}{% for item in data['relations']['hasMany']%}
-        ${{item['related_table']}}={{item['related_model_name']}}::where('{{item['foreignKey']}}', '=', ${{data['modelDotNotation']}}->id)->get();{%endfor%}{% for item in data['foreign']%}
-        ${{item['lowerModelName']}}={{item['modelName']}}::where('id', '=', ${{data['modelDotNotation']}}->{{item['field_name']}})->get();
-        ${{data['modelDotNotation']}}->{{item['field_name']}}=${{item['lowerModelName']}}[0]->{{item['field_view']}};{%endfor%}
+        ${{item['related_table']}}={{item['related_model_name']}}::where('{{item['foreignKey']}}', '=', ${{data['modelDotNotation']}}->id)->get();{%endfor%}
+        {% for item in data['foreign']%}
+        //${{item['lowerModelName']}}={{item['modelName']}}::where('id', '=', ${{data['modelDotNotation']}}->{{item['field_name']}})->get();
+        //${{data['modelDotNotation']}}->{{item['field_name']}}=${{item['lowerModelName']}}[0]->{{item['field_view']}};
+        {%endfor%}
 
         return view('backend.{{data['tableName']}}.show' {%if data['count'](data['relatedTables'])  %} ,compact( {%for item1 in data['relatedTables'] %}{%if data['relatedTables'].index(item1) ==0 %}"{{item1}}"{%else %} ,"{{item1}}"{% endif %}{% endfor %}){%endif%})->with('{{data['modelDotNotation']}}', ${{data['modelDotNotation']}});
     }
