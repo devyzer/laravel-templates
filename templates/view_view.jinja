@@ -5,15 +5,16 @@
             <div class="form-group row">
             {{"{{"}} html()->label(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))->class('col-md-2 form-control-label')->for('{{item['name']}}') }}
             <div class="col-md-10">
-       {%if item['front_type']=="img" or item['front_type']=="image"%}
+       {% if 'foreign' in item %}
+           {{"{{"}} ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}? ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}->{{item['foreign']['field_view']}} : 'N/A' }}
+
+       {%elif item['front_type']=="img" or item['front_type']=="image"%}
                @if (!empty(${{data['modelDotNotation']}}) && ${{data['modelDotNotation']}}->{{item['name']}})
                     <div>{!! html()->img(${{data['modelDotNotation']}}->{{item['name']}}_url)->class('img-thumbnail')  !!}</div>
                 @else
                     <div>{!! html()->i()->class('fa fa-image fa-9x')  !!}</div>
                @endif
-       {%elif  'foreign' in item %}%}
-            {{"{{"}} ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}? ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}->{{item['foreign']['field_view']}} : 'N/A' }}
-       {%else%}
+      {%else%}
 
                 {{"{{"}} ${{data['modelDotNotation']}}->{{item['name']}} }}
 
