@@ -11,7 +11,7 @@
                 @else
                     <div>{!! html()->i()->class('fa fa-image fa-9x')  !!}</div>
                @endif
-       {%elif  'foreign' in item and item['foreign'] %}%}
+       {%elif  'foreign' in item %}%}
             {{"{{"}} ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}? ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}->{{item['foreign']['field_view']}} : 'N/A' }}
        {%else%}
 
