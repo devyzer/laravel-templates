@@ -4,13 +4,6 @@ Breadcrumbs::register('admin.{{data['modelDotNotation']}}.index', function ($bre
 $breadcrumbs->parent('admin.dashboard');
 $breadcrumbs->push(__('strings.backend.{{data['tableName']}}.title'), route('admin.{{data['modelDotNotation']}}.index'));
 });
-{%for item in data['relationTables'] %}
- Breadcrumbs::register('admin.{{data['modelDotNotation']}}.{{item}}', function ($breadcrumbs) {
-    $breadcrumbs->parent('admin.dashboard');
-   $breadcrumbs->push(__('strings.backend.{{data['tableName']}}.title'), route('admin.{{data['modelDotNotation']}}.index'));
-   });
-{% endfor %}
-
 
 Breadcrumbs::register('admin.{{data['modelDotNotation']}}.create', function ($breadcrumbs) {
 $breadcrumbs->parent('admin.{{data['modelDotNotation']}}.index');
