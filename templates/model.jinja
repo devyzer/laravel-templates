@@ -42,12 +42,6 @@
         public $timestamps =["create_at","update_at"];{%else%}
         public $timestamps =false;{% endif%}
 
-       /**
-       * @var array
-       */
-        protected $fieldSearchable = [ {% for f in data['searchable'] %}
-            "{{ f }}",{% endfor %}
-        ];
 
         {% if data['hasSoftDelete'] ==True%}
         /**
