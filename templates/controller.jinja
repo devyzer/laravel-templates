@@ -120,7 +120,7 @@ class {{data['modelName']}}Controller extends Controller
     */
     public function show({{data['modelName']}} ${{data['modelDotNotation']}})
     {
-        return view('backend.{{data['tableName']}}.show' {%if data['count'](data['relatedTables'])  %}){%endif%})->with('{{data['modelDotNotation']}}', ${{data['modelDotNotation']}});
+        return view('backend.{{data['tableName']}}.show')->with('{{data['modelDotNotation']}}', ${{data['modelDotNotation']}});
     }
 
 
