@@ -209,7 +209,7 @@ class {{data['modelName']}}Controller extends Controller
        if (!$req){
            $request["{{item}}"]=0;
        }{%endfor%}
-       $obj=$this->{{data['modelDotNotation']}}Repository->update(${{data['modelDotNotation']}}, $request->all());
+       $obj=$this->{{data['modelDotNotation']}}Repository->update($request->all(), ${{data['modelDotNotation']}});
 
        {%for item1 in data['relations']['belongsToMany'] %} {%if item1[data['weakness']]%}
        if (isset($request->all()['{{item1['related_table']}}'])) {
