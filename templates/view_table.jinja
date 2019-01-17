@@ -3,8 +3,8 @@
         <thead>
         <tr>{%for item in data['columns']%}{%if item['inIndex']==True %}
                 <th>{{'{{'}} __('labels.backend.{{data['tableName']}}.table.{{item['name']}}') }}</th>{% endif %}{% endfor %}
-                {%for item in data['relations']['belongsToMany']%}{%if item['inIndex']==True %}   {% if item['weakness']==True %}
-                <th>{{'{{'}} __('{{item['related_model_name_plural']}}') }}</th>{% endif %}{% endif %}{% endfor %}
+                {%for item in data['relations']['belongsToMany']%}{%if item['inIndex']==True %}
+                <th>{{'{{'}} __('{{item['related_model_name_plural']}}') }}</th>{% endif %}{% endfor %}
             <th>{{'{{'}} __('labels.general.actions') }}</th>
         </tr>
         </thead>
