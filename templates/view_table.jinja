@@ -23,8 +23,8 @@
                    @endif
                </td>{% else %}
                 <td>{{'{{'}}  ${{data['modelDotNotation']}}->{{item['name']}} }}</td> {% endif %}{% endif %} {% endfor %}
-                {%for item1 in data['relations']['belongsToMany']%}{%if item1['inIndex']==True %}{% if item1['weakness']==True %}
-                <td>{{"@"}}{{"foreach"}} (${{item1['related_table']}}[${{data['modelDotNotation']}}->id] as $item){{"{{"}}$item['{{item1['field_view']}}']}}{{"@"}}{{"endforeach"}}</td>{% endif %}{% endif %}{% endfor %}
+                {%for item1 in data['relations']['belongsToMany']%}{%if item1['inIndex']==True %}
+                <td>{{"@"}}{{"foreach"}} (${{data['modelDotNotation']}}->{{item1['name']}} as $item){{"{{"}}$item['{{item1['field_view']}}']}} , {{"@"}}{{"endforeach"}}</td>{% endif %}{% endfor %}
 
                <td>{{'{'}}!! ${{ data['modelDotNotation']}}->action_buttons !!}</td>
         </tr>

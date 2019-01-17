@@ -27,8 +27,8 @@
         <div class="form-group row">
            {{"{{"}}html()->label(__('{{item['related_model_name_plural']}}'))->class('col-md-2 form-control-label')->for('{{item['related_table']}}') }}
             <div class="col-md-10">
-                @if  ( isset(${{item['related_table']}})&&${{item['related_table']}}->count())
-                    @foreach(${{item['related_table']}} as $temp)
+                @if  ( isset(${{data['modelDotNotation']}}->{{item['name']}})&&${{data['modelDotNotation']}}->{{item['name']}}->count())
+                    @foreach(${{data['modelDotNotation']}}->{{item['name']}} as $temp)
                         {{"{{"}}$temp->{{item['field_view']}} }},
                     @endforeach
                 @endif
@@ -38,9 +38,9 @@
         <div class="form-group row">
            {{"{{"}}html()->label(__('{{item['related_model_name_plural']}}'))->class('col-md-2 form-control-label')->for('{{item['related_table']}}') }}
             <div class="col-md-10">
-                @if  ( isset(${{item['related_table']}})&&${{item['related_table']}}->count())
-                    @foreach(${{item['related_table']}} as $temp)
-                       {{"{{"}}$temp->{{item['field_view']}} }},
+                  @if  ( isset(${{data['modelDotNotation']}}->{{item['name']}})&&${{data['modelDotNotation']}}->{{item['name']}}->count())
+                    @foreach(${{data['modelDotNotation']}}->{{item['name']}} as $temp)
+                        {{"{{"}}$temp->{{item['field_view']}} }},
                     @endforeach
                 @endif
             </div><!--col-->

@@ -39,25 +39,9 @@ class {{data['modelName']}}Controller extends Controller
     public function index(Request $request)
     {
         $this-> {{data['modelDotNotation']}}Repository->pushCriteria(new RequestCriteria($request));
-        $data=$this-> {{data['modelDotNotation']}}Repository {% if data['count'](data['relationNames'])%}
-         ->with({%for item in data['relationNames'] %}{%if data['relationNames'].index(item) ==0 %} "{{item}}"{% else %},"{{item}}" {% endif %}{% endfor %}){% endif %}
-         ->paginate(25);
-        {%for item1 in data['weaknessRelation'] %}
-        ${{item1['related_table']}} = [];
-        foreach ($data as $item) {
-        ${{item1['related_table']}}[$item->id] = [];
-        ${{item1['middleTable']}} ={{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', $item->id)->get();
-        foreach (${{item1['middleTable']}} as $object) {
-        $temp = {{item1['related_model_name']}}::where('id', '=', $object['{{item1['related_class']}}_id'])->get();
-        if (isset($temp[0]))
-          array_push( ${{item1['related_table']}}[$item['id']], $temp[0]);
-        }
-        }{% endfor %}
+        $data=$this-> {{data['modelDotNotation']}}Repository->paginate(25);
 
-        return view('backend.{{data['tableName']}}.index'{% if data['count'](data['weakness'])%},compact(
-        {%for item1 in data['weakness'] %}
-           {%if data['weakness'].index(item1) ==0 %}"{{item1}}"{%else %},"{{item1}}" {% endif %}
-        {% endfor %}){% endif %})->with('{{data['tableName']}}', $data);
+        return view('backend.{{data['tableName']}}.index')->with('{{data['tableName']}}', $data);
     }
 
 
@@ -135,16 +119,8 @@ class {{data['modelName']}}Controller extends Controller
     *
     */
     public function show({{data['modelName']}} ${{data['modelDotNotation']}})
-    {   {% for item in data['relations']['belongsToMany']%}
-        ${{item['related_model_variable_name']}}_ids = [];
-        ${{item['middleTable']}} = {{item['middleTableModel']}}::where('{{item['foreignKey']}}', '=', ${{data['modelDotNotation']}}->id)->get();
-        foreach (${{item['middleTable']}} as $item) {
-            array_push(${{item['related_model_variable_name']}}_ids, $item->{{item['otherKey']}});
-        }
-        ${{item['related_table']}}={{item['related_model_name']}}::whereIn('id',${{item['related_model_variable_name']}}_ids)->get();{% endfor %}{% for item in data['relations']['hasMany']%}
-        ${{item['related_table']}}={{item['related_model_name']}}::where('{{item['foreignKey']}}', '=', ${{data['modelDotNotation']}}->id)->get();{%endfor%}
-
-        return view('backend.{{data['tableName']}}.show' {%if data['count'](data['relatedTables'])  %} ,compact( {%for item1 in data['relatedTables'] %}{%if data['relatedTables'].index(item1) ==0 %}"{{item1}}"{%else %} ,"{{item1}}"{% endif %}{% endfor %}){%endif%})->with('{{data['modelDotNotation']}}', ${{data['modelDotNotation']}});
+    {
+        return view('backend.{{data['tableName']}}.show' {%if data['count'](data['relatedTables'])  %}){%endif%})->with('{{data['modelDotNotation']}}', ${{data['modelDotNotation']}});
     }
 
 
