@@ -42,6 +42,27 @@
                         ->required(){%endif%}
                     }}
 
+
+                {% elif item['front_type']=="date" %}
+                        @php
+                                $current_date=null;
+                                if (isset(${{data['modelDotNotation']}}->{{item['name']}})){
+                                $current_date=${{data['modelDotNotation']}}->{{item['name']}}->toDateString();
+                                }
+
+                            @endphp
+
+                       {{'{{'}} html()->{{item['front_type']}}('{{item['name']}}',$current_date)
+                        ->class('form-control')
+                        ->placeholder(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))
+                        {% if "min" in item['frontendRules']%}
+                            ->attribute('minlength', {{item['frontendRules']['min']}}){%endif%}
+                        {% if "max" in item['frontendRules']%}
+                            ->attribute('maxlength', {{item['frontendRules']['max']}}){%endif%}
+                      {% if item['frontendRules']['required']=='required'%}
+                            ->required() {%endif%}
+                         }}
+
                 {%  else %}
                         {{'{{'}} html()->{{item['front_type']}}('{{item['name']}}')
                         ->class('form-control')
