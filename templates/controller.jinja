@@ -39,7 +39,7 @@ class {{data['modelName']}}Controller extends Controller
     public function index(Request $request)
     {
         $this-> {{data['modelDotNotation']}}Repository->pushCriteria(new RequestCriteria($request));
-        $data=$this-> {{data['modelDotNotation']}}Repository->paginate(25);
+        $data=$this-> {{data['modelDotNotation']}}Repository->paginate(10);
 
         return view('backend.{{data['tableName']}}.index')->with('{{data['tableName']}}', $data);
     }
