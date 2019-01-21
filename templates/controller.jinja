@@ -191,7 +191,7 @@ class {{data['modelName']}}Controller extends Controller
        if (isset($request->all()['{{item1['related_table']}}'])) {
         $deleted = {{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', ${{data['modelDotNotation']}}->id)->get();
         foreach ($deleted as $item) {
-           $item->delete();
+           $item->forcedelete();
         }
 
         foreach ($request->all()['{{item1['related_table']}}'] as $item) {
