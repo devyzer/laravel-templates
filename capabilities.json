@@ -13,9 +13,9 @@
   "breadcrumbs":true,
   "lang":true,
   "view":true,
-  "APICreateRequest": false,
-  "APIUpdateRequest": false,
-  "APIController": false,
+  "APICreateRequest": true,
+  "APIUpdateRequest": true,
+  "APIController": true,
   "APIRoute": true
 
 }

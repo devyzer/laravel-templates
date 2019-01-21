@@ -189,7 +189,7 @@ class {{data['modelName']}}Controller extends Controller
 
        {%for item1 in data['weaknessRelation'] %}
 
-       if (isset($request->all()['{{item1['related_table']}}'])) {
+        if (isset($request->all()['{{item1['related_table']}}'])) {
         ${{data['modelDotNotation']}}->{{item1['name']}}()->detach();
         foreach ($request->all()['{{item1['related_table']}}'] as $item) {
         if (is_null($item))
