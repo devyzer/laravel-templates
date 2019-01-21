@@ -109,7 +109,7 @@
         * @return \Illuminate\Database\Eloquent\Relations\belongsToMany
         */
         public function {{ item['name'] }}() {
-            return $this->belongsToMany({{ item['related_model_name'] }}::class,'{{ item['middleTable'] }}'){%if data['count'](item['pivotFields'])%}->withPivot([{%for field in item['pivotFields']%} '{{field}}',{%endfor%}]){%endif%};
+            return $this->belongsToMany({{ item['related_model_name'] }}::class,'{{ item['middleTable'] }}')->whereNull('{{ item['middleTable'] }}.deleted_at')->withTimestamps(){%if data['count'](item['pivotFields'])%}->withPivot([{%for field in item['pivotFields']%} '{{field}}',{%endfor%}]){%endif%};
         }
         {% endfor %}{% endif %}
 
