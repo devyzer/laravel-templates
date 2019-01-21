@@ -190,10 +190,6 @@ class {{data['modelName']}}Controller extends Controller
        {%for item1 in data['weaknessRelation'] %}
 
        if (isset($request->all()['{{item1['related_table']}}'])) {
-      //  $deleted = {{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', ${{data['modelDotNotation']}}->id)->get();
-        //foreach ($deleted as $item) {
-          // $item->forcedelete();
-        //}
         ${{data['modelDotNotation']}}->{{item1['name']}}()->detach();
         foreach ($request->all()['{{item1['related_table']}}'] as $item) {
         if (is_null($item))
