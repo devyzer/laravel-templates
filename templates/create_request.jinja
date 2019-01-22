@@ -28,7 +28,7 @@
 
         public function rules()
         {
-            return [{% for column in data['dbColumns'] %}
+            return [{% for column in data['columns'] %}
              {%if column['front_type']=="img" or column['front_type']=="image"%}
             '{{ column['name']}}_file'=>'{{column['validations']}}', {%else%}
              '{{ column['name'] }}'=>'{{column['validations']}}',{%endif%}{%endfor%}
