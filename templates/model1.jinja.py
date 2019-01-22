@@ -2,7 +2,7 @@
 
     namespace {{data['paths']['controller']}}\{{data['modelName']}};
 
-    use {{data['paths']['controller']}}\Controller;
+    use {{data['paths']['controller']}}\Controller ;
     use Illuminate\Http\Request;
     use \Illuminate\Http\Response;
     use {{data['paths']['createRequest']}}\{{data['modelName']}}\Create{{data['modelName']}};
