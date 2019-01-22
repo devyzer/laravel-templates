@@ -11,10 +11,11 @@
     use Illuminate\Database\Eloquent\SoftDeletes;
     use Iatstuti\Database\Support\CascadeSoftDeletes;{% endif %}{% if data['count'](data['translatable'])%}
     use XLabTechs\Translatable\Traits\HasTranslations;{% endif %}
+    use Kyslik\ColumnSortable\Sortable;
     use Storage;
 
     class {{data['modelName']}} extends Model{
-        use {{data['modelName']}}Attribute, Eloquence{% if data['metable']==True%}, Metable{%endif%}{% if data['hasSoftDelete']%}, SoftDeletes, CascadeSoftDeletes {% endif %}{% if data['count'](data['translatable'])%}, HasTranslations {% endif %}{% if data['count'](data['sluggable'])%}, HasSlug {% endif %};
+        use Sortable, {{data['modelName']}}Attribute, Eloquence{% if data['metable']==True%}, Metable{%endif%}{% if data['hasSoftDelete']%}, SoftDeletes, CascadeSoftDeletes {% endif %}{% if data['count'](data['translatable'])%}, HasTranslations {% endif %}{% if data['count'](data['sluggable'])%}, HasSlug {% endif %};
 
         {% if data['count'](data['sluggable'])%}
         /**
@@ -28,6 +29,16 @@
             ->saveSlugsTo('{{data['sluggable'][1]}}');
         }
         {% endif %}
+
+        /**
+        * The sortable attributes.
+        *
+        * @var array
+        */
+
+        protected $sortable = [ {% for item in data['columns'] %} {%if item['sortable']==True %}
+            "{{ item['name'] }}",{% endif %}{% endfor %}
+        ];
 
         /**
         * The attributes that are mass assignable.

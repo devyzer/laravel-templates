@@ -2,7 +2,9 @@
     <table class="table">
         <thead>
         <tr>{%for item in data['columns']%}{%if item['inIndex']==True %}
-                <th>{{'{{'}} __('labels.backend.{{data['tableName']}}.table.{{item['name']}}') }}</th>{% endif %}{% endfor %}
+                {%if item['sortable']==True %}
+                 <th>@sortablelink('{{item['name']}}', trans('labels.backend.{{data['tableName']}}.table.{{item['name']}}')) </th>{%el%}
+                 <th>{{'{{'}} __('labels.backend.{{data['tableName']}}.table.{{item['name']}}') }}</th>{% endif %}{% endif %}{% endfor %}
                 {%for item in data['relations']['belongsToMany']%}{%if item['inIndex']==True %}
                 <th>{{'{{'}} __('{{item['related_model_name_plural']}}') }}</th>{% endif %}{% endfor %}
             <th>{{'{{'}} __('labels.general.actions') }}</th>
