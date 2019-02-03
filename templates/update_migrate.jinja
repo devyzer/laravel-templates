@@ -14,7 +14,7 @@ class Create{{data['migrateName']}}Table extends Migration
 
     public function up()
     {
-        Schema::table('{{data['tableName']}}', function (Blueprint $table) {
+        Schema::table('{{data['tableName']}}' {%if data['count'](data['added_fields']) or data['count'](data['updated_fields']) or data['count'](data['deleted_fields']) %}, function (Blueprint $table) {
         {% for item in data['deleted_fields'] %}
         $table->dropColumn('{{item["name"]}}');{%endfor%}
        {% for item in data['added_fields'] %} {% if item['name']=="id" or item['name']=="Id"  %}
@@ -28,7 +28,7 @@ class Create{{data['migrateName']}}Table extends Migration
             $table->{{item['dbtype']}}('{{item['name']}}',[{% for key,el in item['selected_data'].items()%}  '{{key}}',{% endfor %}]){% if item['serverStoreRules']['required']!="required"%}->nullable(){% endif %} {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ; {% elif item['dbtype']=="rememberToken"  %}
             $table->rememberToken(); {% else %}
             $table->{{item['dbtype']}}('{{item['name']}}'{%for extra_value in item['extraDbValues']%},{{extra_value}}{%endfor%}){% if item['serverStoreRules']['required']!="required"%}->nullable(){% endif %}  {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ->change(); {% endif %} {% endfor %}
-     });
+     }{%endfif%});
     }
     /**
     * Reverse the migrations.
@@ -37,12 +37,12 @@ class Create{{data['migrateName']}}Table extends Migration
     */
     public function down()
     {
-         Schema::dropIfExists('{{data['tableName']}}', function($table) {
+         Schema::dropIfExists('{{data['tableName']}}'{%if data['count'](data['deleted_fields'])%} , function($table) {
              {% for item in data['deleted_fields'] %}
         $table->{{item["type"]}}('{{item["name"]}}');
         {%endfor%}
 
-        });
+        }{%endfif%});
     }
 
 }
