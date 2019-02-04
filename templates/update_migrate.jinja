@@ -14,7 +14,7 @@ class Create{{data['migrateName']}}Table extends Migration
 
     public function up()
     {
-        Schema::table('{{data['tableName']}}' {%if data['update_mode'] is True %}, function (Blueprint $table) {
+        Schema::table('{{data['tableName']}}' {%if data['update_mode'] == true %}, function (Blueprint $table) {
         {% for item in data['deleted_fields'] %}
         $table->dropColumn('{{item["name"]}}');{%endfor%}
        {% for item in data['added_fields'] %} {% if item['name']=="id" or item['name']=="Id"  %}
