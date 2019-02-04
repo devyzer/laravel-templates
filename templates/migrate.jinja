@@ -21,8 +21,6 @@ class Create{{data['migrateName']}}Table extends Migration
             $table->{{item['dbtype']}}('{{item['name']}}'{%for extra_value in item['extraDbValues']%},{{extra_value}}{%endfor%}){% if item['serverStoreRules']['required']!="required"%}->nullable(){% endif %}  {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ; {% endif %} {% endfor %} {% endif %}
             {% if data['count'](data['unique'])%}{% for item in data['unique'] %}
             $table->unique('{{item['name']}}'); {% endfor %} {% endif %}{%if data['timestamp']%}
-            $table->dateTimeTz('created_at')->nullable();
-            $table->dateTimeTz('updated_at')->nullable();{%else%}
             $table->timestamps();{% endif %}{% if data['count'](data['sluggable'])%}
             $table->string('slug');{% endif %} {% if data['hasSoftDelete']%}
             $table->softDeletes();{% endif %}{% if data['count'](data['sluggable'])%}
