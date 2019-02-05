@@ -2,8 +2,9 @@
     <table class="table">
         <thead>
         <tr>{%for item in data['columns']%}{%if item['inIndex']==True %}
-                {%if item['sortable']==True %}
-                 <th>@sortablelink('{{item['name']}}', trans('labels.backend.{{data['tableName']}}.table.{{item['name']}}')) </th>{%else%}
+                {%if item['sortable']==True %}{% if 'foreign' in item and item["foreign"]%}
+                 <th>@sortablelink('{{item['foreign']['lowerModelName']}}->{{item['foreign']['field_view']}}', trans('labels.backend.{{data['tableName']}}.table.{{item['name']}}')) </th>{%else%}
+                  <th>@sortablelink('{{item['name']}}', trans('labels.backend.{{data['tableName']}}.table.{{item['name']}}')) </th>{%endif%}{%else%}
                  <th>{{'{{'}} __('labels.backend.{{data['tableName']}}.table.{{item['name']}}') }}</th>{% endif %}{% endif %}{% endfor %}
                 {%for item in data['relations']['belongsToMany']%}{%if item['inIndex']==True %}
                 <th>{{'{{'}} __('{{item['related_model_name_plural']}}') }}</th>{% endif %}{% endfor %}
