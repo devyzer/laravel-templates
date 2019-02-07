@@ -81,7 +81,7 @@
        {%endif%} {%endfor%}
 
         <!--end-columns-->
-             {%for item1 in data['relations']['belongsToMany']%}{%if item1['inForm']==True %}{% if item1['weakness']==True%}
+             {%for item1 in data['relations']['belongsToMany']%}{%if item1['inForm']==True %}
                     <div class="form-group row">
                         {{"{{"}}html()->label(__('{{item1["related_model_name_plural"]}}'))->class('col-md-2 form-control-label')->for('{{item1["related_table"]}}') }}
                         <div class="col-md-10">
@@ -96,7 +96,7 @@
                             </select>
                         </div><!--col-->
                     </div><!--form-group-->
-             {%endif%}  {%endif%} {%endfor%}
+            }  {%endif%} {%endfor%}
 
 
 
