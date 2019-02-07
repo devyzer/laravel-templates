@@ -94,7 +94,7 @@ class {{data['modelName']}}Controller extends Controller
            $request["{{item}}"]=0;
        }{%endfor%}
         $obj=$this-> {{data['modelDotNotation']}}Repository->create($request->only( [ {% for f in data['columns'] %}{%if f['inForm']==True%}"{{ f['name'] }}",{% endif %}{% endfor %}]));
-        {%for item1 in data['relations']['belongsToMany'] %}
+        {%for item1 in data['weaknessRelation'] %}
         if (isset($request->all()['{{item1['related_table']}}'])) {
             foreach ($request->all()['{{item1['related_table']}}'] as $item) {
             if (is_null($item))
@@ -141,7 +141,7 @@ class {{data['modelName']}}Controller extends Controller
 
 
 
-         {%for item1 in data['relations']['belongsToMany'] %}
+         {%for item1 in data['weaknessRelation'] %}
         ${{item1['related_table']}} = {{item1['related_model_name']}}::all();
         $selected{{item1['related_model_name']}} = [];
         $related_items = {{item1['middleTableModel']}}::where('{{data['modelDotNotation']}}_id', '=', ${{data['modelDotNotation']}}->id)->get();
