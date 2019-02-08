@@ -141,7 +141,7 @@
         * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
         */
         public function {{ item['lowerModelName'] }}() {
-            return $this->belongsTo({{ item['modelName'] }}::class,'{{item['field_name'}}');
+            return $this->belongsTo({{ item['modelName'] }}::class,'{{item['field_name']}}');
         }
         {% endfor%}{% endif%}
 
