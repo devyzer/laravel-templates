@@ -40,14 +40,14 @@ class Create{{data['migrateName']}}Table extends Migration
             $table->softDeletes();{%endif%}{% if data['other_options']['hasSoftDelete']==1 %}
             $table->dropSoftDeletes();{%endif%}
 
-     }{%endif%});
+
 
          {% if data['count'](data['other_options']['added_foreign'])%}{% for item in data['other_options']['added_foreign'] %}
             $table->foreign('{{item['field_name']}}')
             ->references('{{item['related_field']}}')
             ->on('{{item['table']}}')
             ->onDelete('cascade');{% endfor %} {% endif %}
-
+  }{%endif%});
     }
     /**
     * Reverse the migrations.
