@@ -24,9 +24,9 @@ class Create{{data['migrateName']}}Table extends Migration
 
        {% for item in data['added_fields'] %} {% if item['name']=="id" or item['name']=="Id"  %}
             $table->{{item['dbtype']}}('id'); {% elif item['dbtype']=="enum" %}
-            $table->{{item['dbtype']}}('{{item['name']}}',[{% for key,el in item['selected_data'].items()%}  '{{key}}',{% endfor %}]){% if item['serverStoreRules']['required']!="required"%}->nullable(){% endif %} {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ; {% elif item['dbtype']=="rememberToken"  %}
+            $table->{{item['dbtype']}}('{{item['name']}}',[{% for key,el in item['selected_data'].items()%}  '{{key}}',{% endfor %}])->nullable() {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ; {% elif item['dbtype']=="rememberToken"  %}
             $table->rememberToken(); {% else %}
-            $table->{{item['dbtype']}}('{{item['name']}}'{%for extra_value in item['extraDbValues']%},{{extra_value}}{%endfor%}){% if item['serverStoreRules']['required']!="required"%}->nullable(){% endif %}  {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ; {% endif %} {% endfor %}
+            $table->{{item['dbtype']}}('{{item['name']}}'{%for extra_value in item['extraDbValues']%},{{extra_value}}{%endfor%})->nullable() {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ; {% endif %} {% endfor %}
 
        {% for item in data['updated_fields'] %} {% if item['name']=="id" or item['name']=="Id"  %}
             $table->{{item['dbtype']}}('id'); {% elif item['dbtype']=="enum" %}
