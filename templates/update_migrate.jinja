@@ -18,7 +18,8 @@ class Create{{data['migrateName']}}Table extends Migration
         {% for item in data['deleted_fields'] %}
         $table->dropColumn('{{item["name"]}}');{%endfor%}
            {% if data['count'](data['other_options']['deleted_foreign'])%}{% for item in data['other_options']['deleted_foreign'] %}
-              $table->dropForeign('{{item}}');{% endfor %}
+              $table->dropForeign('{{item["foreign_name"]}}');
+              $table->dropColumn('{{item["name"]}}');{% endfor %}
            {% endif %}
 
        {% for item in data['added_fields'] %} {% if item['name']=="id" or item['name']=="Id"  %}
