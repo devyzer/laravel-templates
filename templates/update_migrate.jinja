@@ -17,6 +17,10 @@ class Create{{data['migrateName']}}Table extends Migration
         Schema::table('{{data['tableName']}}' {%if data['update_mode'] == true %}, function (Blueprint $table) {
         {% for item in data['deleted_fields'] %}
         $table->dropColumn('{{item["name"]}}');{%endfor%}
+           {% if data['count'](data['other_options']['deleted_foreign'])%}
+              $table->dropForeign([{% for item in data['other_options']['deleted_foreign'] %}'{{item['field_name']}}',{% endfor %}]);
+           {% endif %}
+
        {% for item in data['added_fields'] %} {% if item['name']=="id" or item['name']=="Id"  %}
             $table->{{item['dbtype']}}('id'); {% elif item['dbtype']=="enum" %}
             $table->{{item['dbtype']}}('{{item['name']}}',[{% for key,el in item['selected_data'].items()%}  '{{key}}',{% endfor %}]){% if item['serverStoreRules']['required']!="required"%}->nullable(){% endif %} {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ; {% elif item['dbtype']=="rememberToken"  %}
@@ -36,6 +40,13 @@ class Create{{data['migrateName']}}Table extends Migration
             $table->dropSoftDeletes();{%endif%}
 
      }{%endif%});
+
+         {% if data['count'](data['other_options']['added_foreign'])%}{% for item in data['other_options']['added_foreign'] %}
+            $table->foreign('{{item['field_name']}}')
+            ->references('{{item['related_field']}}')
+            ->on('{{item['table']}}')
+            ->onDelete('cascade');{% endfor %} {% endif %}
+
     }
     /**
     * Reverse the migrations.
