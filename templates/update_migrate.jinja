@@ -17,8 +17,8 @@ class Create{{data['migrateName']}}Table extends Migration
         Schema::table('{{data['tableName']}}' {%if data['update_mode'] == true %}, function (Blueprint $table) {
         {% for item in data['deleted_fields'] %}
         $table->dropColumn('{{item["name"]}}');{%endfor%}
-           {% if data['count'](data['other_options']['deleted_foreign'])%}
-              $table->dropForeign([{% for item in data['other_options']['deleted_foreign'] %}'{{item}}',{% endfor %}]);
+           {% if data['count'](data['other_options']['deleted_foreign'])%}{% for item in data['other_options']['deleted_foreign'] %}
+              $table->dropForeign('{{item}}');{% endfor %}
            {% endif %}
 
        {% for item in data['added_fields'] %} {% if item['name']=="id" or item['name']=="Id"  %}
