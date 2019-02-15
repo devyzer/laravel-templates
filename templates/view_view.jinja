@@ -3,7 +3,7 @@
 
        {%for item in data['columns'] %}{%if item['inView']==True%}
             <div class="form-group row">
-            {{"{{"}} html()->label(__('validation.attributes.backend.{{data['tableName']}}.{{item['name']}}'))->class('col-md-2 form-control-label')->for('{{item['name']}}') }}
+            {{"{{"}} html()->label(__('labels.backend.{{data['tableName']}}.table.{{item['name']}}'))->class('col-md-2 form-control-label')->for('{{item['name']}}') }}
             <div class="col-md-10">
        {% if 'foreign' in item and item["foreign"] %}
            {{"{{"}} ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}? ${{data['modelDotNotation']}}->{{item['foreign']['lowerModelName']}}->{{item['foreign']['field_view']}} : 'N/A' }}
