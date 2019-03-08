@@ -14,7 +14,7 @@ class Create{{data['migrateName']}}Table extends Migration
 
     public function up()
     {
-        Schema::create('{{data['tableName']}}', function (Blueprint $table) { {% if data['count'](data['columns'])%} {% for item in data['columns'] %} {% if item['name']=="id" or item['name']=="Id"  %}
+       {% if data['count'](data['columns'])%} Schema::create('{{data['tableName']}}', function (Blueprint $table) {  {% for item in data['columns'] %} {% if item['name']=="id" or item['name']=="Id"  %}
             $table->{{item['dbtype']}}('id'); {% elif item['dbtype']=="enum" %}
             $table->{{item['dbtype']}}('{{item['name']}}',[{% for key,el in item['selected_data'].items()%}  '{{key}}',{% endfor %}]){% if item['serverStoreRules']['required']!="required"%}->nullable(){% endif %} {% if 'default' in item %}{% if item['dbtype']=="string"%}->default('{{item['default']}}'){%else%}->default({{item['default']}}){% endif %}{% endif %} ; {% elif item['dbtype']=="rememberToken"  %}
             $table->rememberToken(); {% else %}
