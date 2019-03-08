@@ -30,9 +30,9 @@ class Create{{data['migrateName']}}Table extends Migration
             $table->foreign('{{item['field_name']}}')
             ->references('{{item['related_field']}}')
             ->on('{{item['table']}}')
-            ->onDelete('cascade');{% endfor %} {% endif %}
+            ->onDelete('cascade');{% endfor %}
 
-     });
+     });{% endif %}
     }
     /**
     * Reverse the migrations.
