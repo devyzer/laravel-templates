@@ -54,7 +54,7 @@ class {{data['modelName']}}Controller extends Controller
     {
         {%for item1 in data['foreign'] %}
         ${{item1['table']}} = {{item1['modelName']}}::all();
-        $selected{{item1['modelName']}} = {{item1['modelName']}}::first()?{{item1['modelName']}}::first()->_id:0;
+        $selected{{item1['modelName']}} = {{item1['modelName']}}::first()?{{item1['modelName']}}::first()->id:0;
            {% endfor %}
         {%for item1 in data['weaknessRelation'] %}
 
@@ -136,7 +136,7 @@ class {{data['modelName']}}Controller extends Controller
     {
         {%for item1 in data['foreign'] %}
         ${{item1['table']}} = {{item1['modelName']}}::all();
-        $selected{{item1['modelName']}} = ${{data['modelDotNotation']}}->{{item1['lowerModelName']}}_id;
+        $selected{{item1['modelName']}} = ${{data['modelDotNotation']}}->{{item1['field_name']}};
          {% endfor %}
 
 
