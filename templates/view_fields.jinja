@@ -7,8 +7,8 @@
                 {% if "foreign" in item and item["foreign"] %}
                     <select class="form-control m-bot15" name="{{item['name']}}" {%if item['frontendRules']['required']=="required" %} required  {%endif%}>
                          <option value="">select...</option>
-                        {{'@'}}{{'if'}}  (${{item['foreign']['table']}}->count())
-                        {{'@'}}{{'foreach'}}(${{item['foreign']['table']}} as $temp)
+                        {{'@'}}{{'if'}}  (${{item['foreign']['relatedEntityPlural']}}->count())
+                        {{'@'}}{{'foreach'}}(${{item['foreign']['relatedEntityPlural']}} as $temp)
                                 <option value="{{"{{"}} $temp->id }}" {{"{{"}} isset(${{data['modelDotNotation']}}->{{item['name']}})&& ${{data['modelDotNotation']}}->{{item['name']}} == $temp->id ? 'selected="selected"' : '' }}>{{"{{"}} $temp->{{item['foreign']['field_view']}} }}</option>
                         {{'@'}}{{'endforeach'}}
                         {{'@'}}{{'endif'}}

@@ -53,8 +53,8 @@ class {{data['modelName']}}Controller extends Controller
     public function create()
     {
         {%for item1 in data['foreign'] %}
-        ${{item1['table']}} = {{item1['modelName']}}::all();
-        $selected{{item1['modelName']}} = {{item1['modelName']}}::first()?{{item1['modelName']}}::first()->id:0;
+        ${{item1['relatedEntityPlural']}} = {{item1['modelName']}}::all();
+        $selected{{item1['capitalName']}} = {{item1['modelName']}}::first()?{{item1['modelName']}}::first()->id:0;
            {% endfor %}
         {%for item1 in data['weaknessRelation'] %}
 
@@ -65,8 +65,8 @@ class {{data['modelName']}}Controller extends Controller
 
         return view('backend.{{data['tableName']}}.create' {% if  data['count'](data['foreign']) or data['count'](data['weakness'])%},compact(
         {%for item1 in data['foreign'] %}{% set enteredCompact= True %}
-        {%if data['foreign'].index(item1) ==0 %}"{{item1['table']}}","selected{{item1['modelName']}}"
-        {%else %} ,"{{item1['table']}}","selected{{item1['modelName']}}"{% endif %}{% endfor %}
+        {%if data['foreign'].index(item1) ==0 %}"{{item1['relatedEntityPlural']}}","selected{{item1['capitalName']}}"
+        {%else %} ,"{{item1['relatedEntityPlural']}}","selected{{item1['capitalName']}}"{% endif %}{% endfor %}
         {%for item1 in data['weakness'] %}{%set key= data['weakness'].index(item1)  %}
         {%if not data['count'](data['foreign'])%}"{{item1}}","{{data['selectData'][key]}}"{%else %} ,"{{item1}}","{{data['selectData'][key]}}" {% endif %}
         {% endfor %}){% endif %});
@@ -135,8 +135,8 @@ class {{data['modelName']}}Controller extends Controller
     public function edit({{data['modelName']}} ${{data['modelDotNotation']}})
     {
         {%for item1 in data['foreign'] %}
-        ${{item1['table']}} = {{item1['modelName']}}::all();
-        $selected{{item1['modelName']}} = ${{data['modelDotNotation']}}->{{item1['field_name']}};
+        ${{item1['relatedEntityPlural']}} = {{item1['modelName']}}::all();
+        $selected{{item1['capitalName']}} = ${{data['modelDotNotation']}}->{{item1['field_name']}};
          {% endfor %}
 
 
@@ -152,8 +152,8 @@ class {{data['modelName']}}Controller extends Controller
 
                 return view('backend.{{data['tableName']}}.edit'{% if data['count'](data['foreign']) or data['count'](data['weakness'])  %},compact(
         {% for  item1 in data['foreign']%} {% set enteredCompact=True %}{%if data['foreign'].index(item1) == 0 %}
-        "{{item1['table']}}","selected{{item1['modelName']}}"{%else%}
-         ,"{{item1['table']}}","selected{{item1['modelName']}}"{%endif%} {%endfor%} {% if data['count'](data['weakness'])  %}
+        "{{item1['relatedEntityPlural']}}","selected{{item1['capitalName']}}"{%else%}
+         ,"{{item1['relatedEntityPlural']}}","selected{{item1['capitalName']}}"{%endif%} {%endfor%} {% if data['count'](data['weakness'])  %}
    {%for item1 in data['weakness'] %}{%set key= data['weakness'].index(item1)  %}
         {%if not data['count'](data['foreign'])%}"{{item1}}","{{data['selectData'][key]}}"{%else %} ,"{{item1}}","{{data['selectData'][key]}}" {% endif %}{% endfor %}{% endif %}
 
