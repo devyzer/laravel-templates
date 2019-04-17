@@ -6,8 +6,8 @@
             'view' => 'View {{data['modelBaseName']}}',
             'edit'       => 'Edit {{data['modelBaseName']}}',
 
-            'table' => [{%for col in data['columns'] %}{% if not col['type']=='text' %}
-                    '{{ col['name'] }}' => "{{ col['title'] }}", {% endif %}{% endfor %}
+            'table' => [{%for col in data['columns'] %}
+                    '{{ col['name'] }}' => "{{ col['title'] }}", {% endfor %}
                     'sort'  => 'Sort',
                     'total' => '{{data['title']}} total|{{data['title']}} total',
             ],
@@ -16,8 +16,8 @@
             'content' => [
                     'created_at'    => 'Created At',
                      'deleted_at'    => 'Deleted At',
-                    'last_updated'  => 'Last Update',{%for col in data['columns'] %}{% if  col['type']=='text' %}
-                   '{{ col['name'] }}' => "{{ col['title'] }}", {% endif %} {% endfor %}
+                    'last_updated'  => 'Last Update',{%for col in data['columns'] %}
+                   '{{ col['name'] }}' => "{{ col['title'] }}",  {% endfor %}
 
 
                   ]
